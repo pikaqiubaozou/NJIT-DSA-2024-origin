@@ -1,17 +1,18 @@
 package oy.tol.tra;
 
-public class Person implements Comparable<Person> {
-    private String firstName;
-    private String lastName;
+import java.util.Objects;
 
-    public Person(final Person person) {
-        this.firstName = new String(person.firstName);
-        this.lastName = new String(person.lastName);
-    }
+public class Person implements Comparable<Person> {
+    private final String firstName;
+    private final String lastName;
 
     public Person(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = Objects.requireNonNull(firstName, "First name must not be null");
+        this.lastName = Objects.requireNonNull(lastName, "Last name must not be null");
+    }
+
+    public Person(Person person) {
+        this(person.getFirstName(), person.getLastName());
     }
 
     public String getLastName() {
@@ -30,20 +31,24 @@ public class Person implements Comparable<Person> {
     public String toString() {
         return getFullName();
     }
+
     @Override
     public int hashCode() {
-        return getFullName().hashCode();
+        return Objects.hash(firstName, lastName);
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (other instanceof Person) {
-            return this.getFullName().equals(((Person)other).getFullName());
-        }
-        return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return Objects.equals(firstName, person.firstName) &&
+                Objects.equals(lastName, person.lastName);
     }
+
     @Override
     public int compareTo(Person other) {
-        return getFullName().compareTo(other.getFullName());
+        int lastNameComparison = lastName.compareTo(other.lastName);
+        return lastNameComparison != 0 ? lastNameComparison : firstName.compareTo(other.firstName);
     }
 }
