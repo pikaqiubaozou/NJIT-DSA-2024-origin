@@ -6,10 +6,7 @@ import java.util.Stack;
 
 public class KeyValueBSearchTree<K extends Comparable<K>, V> implements Dictionary<K, V> {
 
-    // This is the BST implementation, KeyValueHashTable has the hash table
-    // implementation
-
-    private TreeNode<K, V> root=null;
+    private TreeNode<K, V> root = null;
     private int count = 0;
     private int maxTreeDepth = 0;
 
@@ -25,7 +22,7 @@ public class KeyValueBSearchTree<K extends Comparable<K>, V> implements Dictiona
 
     @Override
     public String getStatus() {
-        StringBuilder toReturn1=new StringBuilder("Tree has max depth of " + maxTreeDepth + ".\n");
+        StringBuilder toReturn1 = new StringBuilder("Tree has max depth of " + maxTreeDepth + ".\n");
         toReturn1.append("Longest collision chain in a tree node is " + TreeNode.longestCollisionChain + "\n");
         TreeAnalyzerVisitor<K, V> visitor = new TreeAnalyzerVisitor<>();
         root.accept(visitor);
@@ -37,18 +34,15 @@ public class KeyValueBSearchTree<K extends Comparable<K>, V> implements Dictiona
     }
 
     public boolean add(K key, V value) throws IllegalArgumentException, OutOfMemoryError {
-        if(key==null||value==null)
-        {
+        if (key == null || value == null) {
             throw new IllegalArgumentException("This is a custom NullPointerException message");
         }
-        if(root==null)
-        {
-            root=new TreeNode<K,V>(key, value);
+        if (root == null) {
+            root = new TreeNode<>(key, value);
             count++;
             return true;
-        }
-        else {
-            count+= root.insert(key,value,key.hashCode());
+        } else {
+            count += root.insert(key, value, key.hashCode());
             return true;
         }
     }
@@ -70,10 +64,8 @@ public class KeyValueBSearchTree<K extends Comparable<K>, V> implements Dictiona
         return root.find(key, key.hashCode());
     }
 
-
-
     @Override
     public void compress() throws OutOfMemoryError {
+        // No implementation needed for compression as trees do not require it.
     }
-
 }
