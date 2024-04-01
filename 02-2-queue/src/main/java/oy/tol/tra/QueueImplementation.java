@@ -3,42 +3,54 @@ package oy.tol.tra;
 import java.util.Arrays;
 
 public class QueueImplementation<E> implements QueueInterface<E> {
-
-    private static final int DEFAULT_CAPACITY = 10;
-    private E[] itemArray;
-    private int size;
+    private Object[] itemArray;
     private int capacity;
-
-    @SuppressWarnings("unchecked")
-    public QueueImplementation(int capacity) {
-        this.capacity = capacity > 0 ? capacity : DEFAULT_CAPACITY;
-        this.itemArray = (E[]) new Object[this.capacity];
-        this.size = 0;
-    }
+    private int head = 0;
+    private int tail = 0;
+    private int size = 0;
+    private static final int DEFAULT_QUEUE_SIZE = 10;
+    private static final int EXPANSION_SIZE = 10;
 
     public QueueImplementation() {
-        this(DEFAULT_CAPACITY);
+        this(DEFAULT_QUEUE_SIZE);
+    }
+
+    public QueueImplementation(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Capacity must be a positive integer");
+        }
+        this.capacity = capacity;
+        this.itemArray = new Object[capacity];
     }
 
     @Override
-    public void enqueue(E element) throws QueueAllocationException, NullPointerException {
-        if (element == null) {
-            throw new NullPointerException("Cannot push null element onto the stack.");
-        }
-        if (size >= capacity) {
-            reallocate();
-        }
-        itemArray[size++] = element;
+    public int capacity() {
+        return capacity;
     }
 
     @Override
-    public E dequeue() {
+    public E dequeue() throws QueueIsEmptyException {
         if (isEmpty()) {
-            throw new QueueIsEmptyException("Queue is empty, can't dequeue.");
+            throw new QueueIsEmptyException("Queue is empty");
         }
-        E element = itemArray[0];
-        System.arraycopy(itemArray, 1, itemArray, 0, --size);
-        return element;
+        size--;
+        E tmp = (E) itemArray[head];
+        itemArray[head] = null;
+        head = (head + 1) % capacity;
+        return tmp;
+    }
+
+    @Override
+    public void enqueue(E element) {
+        if (element == null) {
+            throw new NullPointerException("Element cannot be null");
+        }
+        if (size == capacity) {
+            expandCapacity();
+        }
+        itemArray[tail] = element;
+        tail = (tail + 1) % capacity;
+        size++;
     }
 
     @Override
@@ -46,7 +58,7 @@ public class QueueImplementation<E> implements QueueInterface<E> {
         if (isEmpty()) {
             throw new QueueIsEmptyException("Queue is empty");
         }
-        return itemArray[0];
+        return (E) itemArray[head];
     }
 
     @Override
@@ -61,37 +73,44 @@ public class QueueImplementation<E> implements QueueInterface<E> {
 
     @Override
     public void clear() {
-        for (int i = 0; i <= size; i++) {
-            itemArray[i] = null;
-        }
-
-        size = 0;
-
-    }
-
-    @Override
-    public int capacity() {
-        return capacity;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void reallocate() {
-        capacity *= 2;
-        E[] newArray = (E[]) new Object[capacity];
-        System.arraycopy(itemArray, 0, newArray, 0, size);
-        itemArray = newArray;
+        Arrays.fill(itemArray, null);
+        head = tail = size = 0;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < size; i++) {
-            sb.append(itemArray[i]);
-            if (i < size - 1) {
-                sb.append(", ");
+        StringBuilder builder = new StringBuilder("[");
+        if (tail >= head) {
+            for (int i = head; i < tail; i++) {
+                builder.append(itemArray[i]);
+                if (i < tail - 1) {
+                    builder.append(", ");
+                }
+            }
+        } else {
+            for (int i = head; i < head + size; i++) {
+                builder.append(itemArray[i % capacity]);
+                if (i < head + size - 1) {
+                    builder.append(", ");
+                }
             }
         }
-        sb.append("]");
-        return sb.toString();
+        builder.append("]");
+        return builder.toString();
+    }
+
+    private void expandCapacity() {
+        int newCapacity = capacity + EXPANSION_SIZE;
+        Object[] newArray = new Object[newCapacity];
+        if (tail >= head) {
+            System.arraycopy(itemArray, head, newArray, 0, size);
+        } else {
+            System.arraycopy(itemArray, head, newArray, 0, capacity - head);
+            System.arraycopy(itemArray, 0, newArray, capacity - head, tail);
+        }
+        itemArray = newArray;
+        capacity = newCapacity;
+        head = 0;
+        tail = size;
     }
 }

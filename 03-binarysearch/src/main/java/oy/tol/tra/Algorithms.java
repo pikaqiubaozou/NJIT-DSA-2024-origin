@@ -17,42 +17,41 @@ public class Algorithms {
             return binarySearch(aValue, fromArray, mid + 1, toIndex);
         }
     }
-    public static <T extends Comparable<T>> void fastSort(T[] fromArray, int fromIndex, int toIndex) {
-        if (fromIndex < toIndex) {
-            int pivotIndex = partition(fromArray, fromIndex, toIndex);
-            fastSort(fromArray, fromIndex, pivotIndex - 1);
-            fastSort(fromArray, pivotIndex + 1, toIndex);
+
+    public static <T extends Comparable<T>> void quickSort(T[] array) {
+        quickSort(array, 0, array.length - 1);
+    }
+
+    private static <T extends Comparable<T>> void quickSort(T[] array, int low, int high) {
+        if (low < high) {
+            int pivotIndex = partition(array, low, high);
+            quickSort(array, low, pivotIndex - 1);
+            quickSort(array, pivotIndex + 1, high);
         }
     }
 
-    private static <T extends Comparable<T>> int partition(T[] fromArray, int fromIndex, int toIndex) {
-        int pivotIndex = (fromIndex + toIndex) / 2;
-        T pivotValue = fromArray[pivotIndex];
-        swap(fromArray, pivotIndex, toIndex);
-        int storeIndex = fromIndex;
-
-        for (int i = fromIndex; i < toIndex; i++) {
-            if (fromArray[i].compareTo(pivotValue) < 0) {
-                swap(fromArray, storeIndex, i);
-                storeIndex++;
+    private static <T extends Comparable<T>> int partition(T[] array, int low, int high) {
+        T pivot = array[high];
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            if (array[j].compareTo(pivot) <= 0) {
+                i++;
+                T temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
             }
         }
-
-        swap(fromArray, storeIndex, toIndex);
-        return storeIndex;
-    }
-
-    private static <T> void swap(T[] array, int i, int j) {
-        T temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+        T temp = array[i + 1];
+        array[i + 1] = array[high];
+        array[high] = temp;
+        return i + 1;
     }
 
     public static void sort(Integer[] array) {
-        fastSort(array, 0, array.length - 1);
+        quickSort(array);
     }
 
     public static void sort(String[] array) {
-        fastSort(array, 0, array.length - 1);
+        quickSort(array);
     }
 }
