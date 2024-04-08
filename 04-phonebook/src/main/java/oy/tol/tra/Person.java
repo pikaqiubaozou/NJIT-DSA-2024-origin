@@ -34,7 +34,11 @@ public class Person implements Comparable<Person> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName);
+        // 自己实现计算哈希值的方法
+        int result = 17;
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        return result;
     }
 
     @Override
