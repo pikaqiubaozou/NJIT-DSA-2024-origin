@@ -96,19 +96,15 @@ public class QueueImplementation<E> implements QueueInterface<E> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("[");
-        if (tail >= head) {
-            for (int index = head; index < tail; index++) {
-                builder.append(itemArray[index]);
-                if (index < tail - 1) {
-                    builder.append(", ");
-                }
-            }
-        } else {
-            for (int index = head; index < tail + capacity; index++) {
-                builder.append(itemArray[index % capacity]);
-                if (index < tail + capacity - 1) {
-                    builder.append(", ");
-                }
+        if (!isEmpty()) {
+            int index = head;
+            builder.append(itemArray[index]);
+            index = (index + 1) % capacity;
+            int count = 1;
+            while (index != tail && count < size) {
+                builder.append(", ").append(itemArray[index]);
+                index = (index + 1) % capacity;
+                count++;
             }
         }
         builder.append("]");
