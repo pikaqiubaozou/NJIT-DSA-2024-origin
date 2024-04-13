@@ -1,53 +1,29 @@
 package oy.tol.tra;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- * This class provides methods to instantiate queues implementing the QueueInterface.
+ * This class instantiates a queue implementing the {@code QueueInterface}.
  *
  * @author Antti Juustila
  */
 public class QueueFactory {
+    private static final Logger LOGGER = Logger.getLogger(QueueFactory.class.getName());
 
     private QueueFactory() {
-        // Private constructor to prevent instantiation of this utility class.
     }
 
     /**
-     * Creates an instance of QueueInterface for Integer type with the specified capacity.
-     *
+     * Creates an instance of QueueInterface for Integer type.
      * @param capacity Number of elements the queue can hold.
      * @return The queue object.
      */
     public static QueueInterface<Integer> createIntegerQueue(int capacity) {
+        LOGGER.log(Level.INFO, "Creating Integer queue with capacity: {0}", capacity);
         return new QueueImplementation<>(capacity);
     }
 
-    /**
-     * Creates an instance of QueueInterface for String type with the specified capacity.
-     *
-     * @param capacity Number of elements the queue can hold.
-     * @return The queue object.
-     */
-    public static QueueInterface<String> createStringQueue(int capacity) {
-        return new QueueImplementation<>(capacity);
-    }
+    // Add similar methods for other types of queues...
 
-    /**
-     * Creates an instance of QueueInterface for Integer type using the default constructor.
-     * The default constructor creates a queue with default capacity.
-     *
-     * @return The queue object.
-     */
-    public static QueueInterface<Integer> createIntegerQueue() {
-        return new QueueImplementation<>();
-    }
-
-    /**
-     * Creates an instance of QueueInterface for String type using the default constructor.
-     * The default constructor creates a queue with default capacity.
-     *
-     * @return The queue object.
-     */
-    public static QueueInterface<String> createStringQueue() {
-        return new QueueImplementation<>();
-    }
 }
